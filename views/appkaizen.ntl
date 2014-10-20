@@ -9,30 +9,38 @@
     /******** Load jQuery if not present *********/
     if (window.jQuery === undefined) { // || window.jQuery.fn.jquery !== '1.4.2') {
         var script_tag = document.createElement('script');
-        script_tag.setAttribute("type","text/javascript");
+        script_tag.setAttribute("type", "text/javascript");
         script_tag.setAttribute("src", "http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js");
         if (script_tag.readyState) {
             script_tag.onreadystatechange = function () { // For old versions of IE
                 if (this.readyState == 'complete' || this.readyState == 'loaded') {
-                    scriptLoadHandler();
+                    jqLoaded();
                 }
             };
         } else { // Other browsers
-            script_tag.onload = scriptLoadHandler;
+            script_tag.onload = jqLoaded;
         }
         head.appendChild(script_tag);
     } else {
         // The jQuery version on the window is the one we want to use
         jQuery = window.jQuery;
-        main();
     }
+    /*********** Load SocketIO ***********/
     var io_script_tag = document.createElement('script');
     io_script_tag.setAttribute("type","text/javascript");
     io_script_tag.setAttribute("src", "#chat_relay_baseURL#/socket.io/socket.io.js");
+    if (io_script_tag.readyState) {
+        io_script_tag.onreadystatechange = function () { // For old versions of IE
+            if (this.readyState == 'complete' || this.readyState == 'loaded') {
+                wait();
+            }
+        };
+    } else { // Other browsers
+        io_script_tag.onload = wait;
+    }
     head.appendChild(io_script_tag);
-    
     /******** Called once jQuery has loaded ******/
-    function scriptLoadHandler() {
+    function jqLoaded() {
         // Restore $ and window.jQuery to their previous values and store the
         // new jQuery in our local jQuery variable
         jQuery = window.jQuery.noConflict(true);
@@ -48,13 +56,20 @@
                 }
             };
         }
-        // Call our main function
-        main(); 
+        jqf = true;
+    }
+    /******* Wait for jQuery and SocketIO to be loaded ***********/
+    function wait() {
+        if (jQuery) main();
+        else setTimeout(wait, 300);
     }
     /******** Our main function ********/
     function main() { 
         jQuery(document).ready(function($) { 
+            var uids = 'kc_' + (new Date()).getTime();
             var container = $('<div>');
+            container.attr('id', uids);
+            uids = '#' + uids;
             container.addClass('appkaizen_chat');
             container.html(' \
                 <div class="chat_header"> \
@@ -137,26 +152,27 @@
                 } \
             ";
             $('<style type="text/css">').text(css).appendTo(head);
-            var socket = io(); 
-            $('form').submit(function() {
+            var socket = io('#chat_relay_baseURL#'); 
+            $('form', uids).submit(function() {
                 socket.emit('chat message', {
-                    message: $('.message').val(),
-                    user_id: 1234
+                    message: $('.message', uids).val(),
+                    user_id: #user_id# 
                 });
-                $('.chat_history').append($('<li>').addClass('sent').text('» ' + $('.message').val()));
-                $('.chat_body').scrollTop(0xffff);
-                $('.message').val('');
+                $('.chat_history', uids).append($('<li>').addClass('sent').text('» ' + $('.message').val()));
+                $('.chat_body', uids).scrollTop(0xffff);
+                $('.message', uids).val('');
                 return false;
             });
-            $(".message").keypress(function(e) {
+            console.log(uids);
+            $(".message", uids).keypress(function(e) {
                 if (e.which == 13) {
-                    $('form').submit();
+                    $('form', uids).submit();
                     return false;
                 }
             });
             socket.on('chat message', function(msg){
-                $('.chat_history').append($('<li>').addClass('received').text("Joe «\n" + msg));
-                $('.chat_body').scrollTop(0xffff);
+                $('.chat_history', uids).append($('<li>').addClass('received').text(msg));
+                $('.chat_body', uids).scrollTop(0xffff);
             });
         });
     }

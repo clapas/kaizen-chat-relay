@@ -17,8 +17,9 @@ app.engine('ntl', function (filePath, options, callback) { // define the templat
         if (err) throw new Error(err);
         // this is an exteremly simple template engine
         var rendered = content.toString()
-            .replace('#bgcolor#', options.bgcolor)
-            .replace('#chat_relay_baseURL#', options.baseURL);
+            .replace(/#user_id#/g, options.user_id)
+            .replace(/#bgcolor#/g, options.bgcolor)
+            .replace(/#chat_relay_baseURL#/g, options.baseURL);
         return callback(null, rendered);
     })
 });
@@ -30,13 +31,15 @@ app.get('/appkaizen.js', function (req, res) {
     res.setHeader('content-type', 'application/javascript');
     res.render('appkaizen', {
         bgcolor: req.query.bgcolor,
+        user_id: req.query.user_id,
         baseURL: req.protocol + '://' + req.get('host')
     });
 });
 
+var config = require('./config')
 io.on('connection', function(socket) {
     var options = {
-        host: 'appkaizen.appspot.com',
+        host: config.XMPP_BOT,
         port: 80,
         method: 'POST',
         headers: {
@@ -60,7 +63,6 @@ io.on('connection', function(socket) {
     socket.on('chat message', function(data) {
         console.log(data, socket.id);
         socket.user_id = data.user_id;
-        //io.sockets.in(socket.id).emit('chat message', data.message);
         data.message = 'message=' + encodeURIComponent(data.message) + '&socket.io=' + socket.id + '&user_id=' + data.user_id;
 
         options.path = '/send';
