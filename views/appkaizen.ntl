@@ -70,7 +70,7 @@
             var container = $('<div>');
             container.attr('id', uids);
             uids = '#' + uids;
-            container.addClass('appkaizen_chat');
+            container.addClass('appkaizen_chat collapsed');
             container.html(' \
                 <div class="chat_header"> \
                   <h2>Appkaizen chat</h2> \
@@ -78,7 +78,17 @@
                 <div class="chat_body"> \
                   <ul class="chat_history"> \
                   </ul> \
-                  <form> \
+                  <form class="offline"> \
+                      <p>We are currently offline. Please, use the form below to contact us:</p> \
+                      <label>Your name</label> \
+                      <input name="vname" placeholder="Type your name here"> \
+                      <label>Your email</label> \
+                      <input name="vemail" placeholder="Type your email here"> \
+                      <label>Your message</label> \
+                      <textarea class="message" rows="6" placeholder="Type your message here"></textarea> \
+                      <input type="submit" value="Send"> \
+                  </form> \
+                  <form class="online hidden"> \
                     <div class="input-wrapper"> \
                       <textarea class="message" autocomplete="off"></textarea> \
                     </div> \
@@ -100,25 +110,35 @@
     
             var css = " \
                 .appkaizen_chat { \
+                    padding: 2px; \
                     position: fixed; \
-                    bottom: 0; \
                     right: 5px; \
                     width: 260px; \
                     height: 360px; \
                     border: 1px solid black; \
                     background-color: #bgcolor#; \
                 } \
+                .appkaizen_chat.collapsed { \
+                    bottom: -336px; \
+                } \
+                .appkaizen_chat.expanded { \
+                    bottom: 0; \
+                } \
                 .appkaizen_chat h2 { \
                     margin: 2px; \
                 } \
                 .appkaizen_chat .chat_header { \
-                    border-bottom: 1px solid black; \
+                    border-bottom: 1px solid #ccc; \
+                    cursor: pointer; \
+                } \
+                .appkaizen_chat .chat_header h2 { \
+                    font-size: 1.1em; \
                 } \
                 .appkaizen_chat .chat_body { \
                     height: 75%; \
                     overflow-y: auto; \
                 } \
-                .appkaizen_chat .chat_body form { \
+                .appkaizen_chat .chat_body form.online { \
                     position: absolute; \
                     bottom: 0px; \
                     width: 100%; \
@@ -126,12 +146,31 @@
                 .appkaizen_chat .chat_body .input-wrapper{ \
                     padding: 4px; \
                 } \
-                .appkaizen_chat .chat_body textarea { \
-                    width: 96%; \
+                .appkaizen_chat .chat_body textarea, .appkaizen_chat .chat_body input { \
+                    width: 94%; \
                     margin: 0; \
                     padding: 2%; \
                     display: block; \
                     resize: none; \
+                    border-width: 1px; \
+                } \
+                .appkaizen_chat .chat_body .offline textarea { \
+                    font-size: 0.9rem; \
+                } \
+                .appkaizen_chat .chat_body .offline textarea, .appkaizen_chat .chat_body .offline input { \
+                    margin: 2px; \
+                    padding: 2px; \
+                } \
+                .appkaizen_chat .chat_body .offline input[type=\"submit\"] { \
+                    border-width: 2px; \
+                    display: inline; \
+                    margin: 0 2px; \
+                } \
+                .appkaizen_chat .chat_body .offline p { \
+                    font-size: 0.8em; \
+                    font-style: italic; \
+                    margin: 0 auto 2px; \
+                    text-align: center; \
                 } \
                 .appkaizen_chat ul { \
                     font-size: 0.9em; \
@@ -150,29 +189,53 @@
                     padding-left: 25px; \
                     text-align: right; \
                 } \
+                .appkaizen_chat .hidden { \
+                    display: none; \
+                } \
+                .appkaizen_chat label { \
+                    display: block; \
+                } \
             ";
             $('<style type="text/css">').text(css).appendTo(head);
             var socket = io('#chat_relay_baseURL#'); 
-            $('form', uids).submit(function() {
+            $('form.online', uids).submit(function() {
                 socket.emit('chat message', {
-                    message: $('.message', uids).val(),
+                    message: $('.message', this).val(),
                     user_id: #user_id# 
                 });
-                $('.chat_history', uids).append($('<li>').addClass('sent').text('» ' + $('.message').val()));
+                $('.chat_history', uids).append($('<li>').addClass('sent').text('» ' + $('.message', this).val()));
                 $('.chat_body', uids).scrollTop(0xffff);
-                $('.message', uids).val('');
+                $('.message', this).val('');
                 return false;
             });
-            console.log(uids);
+            $('form.offline', uids).submit(function() {
+                socket.emit('email message', {
+                    message: $('.message', this).val(),
+                    from: $('input[name="vname"]').val() + ' <' + $('input[name="vemail"]').val() + '>',
+                    user_id: #user_id# 
+                });
+                $(this).replaceWith('Your message has been sent. Thank you!');
+                return false;
+            });
             $(".message", uids).keypress(function(e) {
                 if (e.which == 13) {
-                    $('form', uids).submit();
+                    $('form.online', uids).submit();
                     return false;
                 }
+            });
+            $('.chat_header', uids).on('click', function(e) {
+                $(uids).toggleClass('expanded').toggleClass('collapsed');
             });
             socket.on('chat message', function(msg){
                 $('.chat_history', uids).append($('<li>').addClass('received').text(msg));
                 $('.chat_body', uids).scrollTop(0xffff);
+            });
+            socket.on('available', function(msg) {
+                $('form.offline', uids).toggleClass('hidden');
+                $('form.online', uids).toggleClass('hidden');
+            });
+            socket.emit('test', {
+                user_id: #user_id# 
             });
         });
     }

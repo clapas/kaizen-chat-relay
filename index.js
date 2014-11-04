@@ -76,6 +76,32 @@ io.on('connection', function(socket) {
         httpreq.write(data.message);
         httpreq.end();
     });
+    socket.on('email message', function(data) {
+        console.log(data, socket.id);
+        socket.user_id = data.user_id;
+        data.message = 'message=' + encodeURIComponent(data.message) + '&user_id=' + data.user_id + '&from=' + encodeURIComponent(data.from);
+
+        options.path = '/email';
+        options.headers['Content-Length'] = Buffer.byteLength(data.message);
+        var httpreq = http.request(options, function (response) {
+            response.setEncoding('utf8');
+            response.on('data', function (chunk) {
+                console.log("body: " + chunk);
+            });
+        });
+        httpreq.write(data.message);
+        httpreq.end();
+    });
+    socket.on('test', function(data) {
+        var test = 'socket.io=' + socket.id + '&user_id=' + data.user_id;
+        options.path = '/send';
+        options.headers['Content-Length'] = Buffer.byteLength(test);
+        var httpreq = http.request(options, function (response) {
+            if (response.statusCode != '503') io.sockets.in(socket.id).emit('available');
+        });
+        httpreq.write(test);
+        httpreq.end();
+    });
 });
 
 app.get('/answer', function(req, res) {
