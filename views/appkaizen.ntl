@@ -73,7 +73,10 @@
             container.addClass('appkaizen_chat collapsed');
             container.html(' \
                 <div class="chat_header"> \
-                  <h2>Appkaizen chat</h2> \
+                  <h2> \
+                      Appkaizen chat \
+                      <span class="icon-close-open"></span> \
+                  </h2> \
                 </div> \
                 <div class="chat_body"> \
                   <ul class="chat_history"> \
@@ -109,7 +112,60 @@
             root_el.parent().append(container);
     
             var css = " \
+                /***************/ \
+                /* MEYER RESET */ \
+                /***************/ \
+                 \
+                .appkaizen_chat.html, .appkaizen_chat.body, .appkaizen_chat.div, .appkaizen_chat.span, .appkaizen_chat.applet, .appkaizen_chat.object, .appkaizen_chat.iframe, .appkaizen_chat.\
+                .appkaizen_chat.h1, .appkaizen_chat.h2, .appkaizen_chat.h3, .appkaizen_chat.h4, .appkaizen_chat.h5, .appkaizen_chat.h6, .appkaizen_chat.p, .appkaizen_chat.blockquote, .appkaizen_chat.pre, .appkaizen_chat.\
+                .appkaizen_chat.a, .appkaizen_chat.abbr, .appkaizen_chat.acronym, .appkaizen_chat.address, .appkaizen_chat.big, .appkaizen_chat.cite, .appkaizen_chat.code, .appkaizen_chat.\
+                .appkaizen_chat.del, .appkaizen_chat.dfn, .appkaizen_chat.em, .appkaizen_chat.img, .appkaizen_chat.ins, .appkaizen_chat.kbd, .appkaizen_chat.q, .appkaizen_chat.s, .appkaizen_chat.samp, .appkaizen_chat.\
+                .appkaizen_chat.small, .appkaizen_chat.strike, .appkaizen_chat.strong, .appkaizen_chat.sub, .appkaizen_chat.sup, .appkaizen_chat.tt, .appkaizen_chat.var, .appkaizen_chat.\
+                .appkaizen_chat.b, .appkaizen_chat.u, .appkaizen_chat.i, .appkaizen_chat.center, .appkaizen_chat.\
+                .appkaizen_chat.dl, .appkaizen_chat.dt, .appkaizen_chat.dd, .appkaizen_chat.ol, .appkaizen_chat.ul, .appkaizen_chat.li, .appkaizen_chat.\
+                .appkaizen_chat.fieldset, .appkaizen_chat.form, .appkaizen_chat.label, .appkaizen_chat.legend, .appkaizen_chat.\
+                .appkaizen_chat.table, .appkaizen_chat.caption, .appkaizen_chat.tbody, .appkaizen_chat.tfoot, .appkaizen_chat.thead, .appkaizen_chat.tr, .appkaizen_chat.th, .appkaizen_chat.td, .appkaizen_chat.\
+                .appkaizen_chat.article, .appkaizen_chat.aside, .appkaizen_chat.canvas, .appkaizen_chat.details, .appkaizen_chat.embed,  .appkaizen_chat.\
+                .appkaizen_chat.figure, .appkaizen_chat.figcaption, .appkaizen_chat.footer, .appkaizen_chat.header, .appkaizen_chat.hgroup,  .appkaizen_chat.\
+                .appkaizen_chat.menu, .appkaizen_chat.nav, .appkaizen_chat.output, .appkaizen_chat.ruby, .appkaizen_chat.section, .appkaizen_chat.summary, .appkaizen_chat.\
+                .appkaizen_chat.time, .appkaizen_chat.mark, .appkaizen_chat.audio, .appkaizen_chat.video { \
+                	margin: 0; \
+                	padding: 0; \
+                	border: 0; \
+                	font-size: 100%; \
+                	font: inherit; \
+                	vertical-align: baseline; \
+                } \
+                // HTML5 display-role reset for older browsers \
+                .appkaizen_chat.article, .appkaizen_chat.aside, .appkaizen_chat.details, .appkaizen_chat.figcaption, .appkaizen_chat.figure,  .appkaizen_chat.\
+                .appkaizen_chat.footer, .appkaizen_chat.header, .appkaizen_chat.hgroup, .appkaizen_chat.menu, .appkaizen_chat.nav, .appkaizen_chat.section { \
+                	display: block; \
+                } \
+                .appkaizen_chat.ol, .appkaizen_chat.ul { \
+                	list-style: none; \
+                } \
+                .appkaizen_chat.blockquote, .appkaizen_chat.q { \
+                	quotes: none; \
+                } \
+                .appkaizen_chat.blockquote:before, .appkaizen_chat.blockquote:after, \
+                .appkaizen_chat.q:before, .appkaizen_chat.q:after { \
+                	content: ''; \
+                	content: none; \
+                } \
+                .appkaizen_chat.table { \
+                	border-collapse: collapse; \
+                	border-spacing: 0; \
+                } \
+                // Apply a natural box layout model to all elements \
+                // from: http://www.paulirish.com/2012/box-sizing-border-box-ftw/ \
+                .appkaizen_chat.*, .appkaizen_chat.*:before, .appkaizen_chat.*:after { \
+                  -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; \
+                } \
                 .appkaizen_chat { \
+                    -moz-border-radius: 10px; \
+                    -webkit-border-radius: 10px; \
+                    border-radius: 10px; /* future proofing */ \
+                    -khtml-border-radius: 10px; /* for old Konqueror browsers */ \
                     padding: 2px; \
                     position: fixed; \
                     right: 5px; \
@@ -117,16 +173,21 @@
                     height: 360px; \
                     border: 1px solid black; \
                     background-color: #bgcolor#; \
+                    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; \
                     font-size: 14px; \
                 } \
                 .appkaizen_chat.collapsed { \
-                    bottom: -336px; \
+                    bottom: -327px; \
                 } \
                 .appkaizen_chat.expanded { \
                     bottom: 0; \
                 } \
                 .appkaizen_chat h2 { \
                     margin: 2px; \
+                    line-height: 1.7; \
+                    color: #222; \
+                    font-weight: bold; \
+                    padding: 0; \
                 } \
                 .appkaizen_chat .chat_header { \
                     border-bottom: 1px solid #ccc; \
@@ -195,6 +256,19 @@
                 } \
                 .appkaizen_chat label { \
                     display: block; \
+                } \
+                .appkaizen_chat .icon-close-open { \
+                    width: 20px; \
+                    height: 20px; \
+                    position: absolute; \
+                    background-image: url(icon-close-open.png); \
+                    right: 15px; \
+                } \
+                .appkaizen_chat.collapsed .icon-close-open { \
+                    background-position: 0 0; \
+                } \
+                .appkaizen_chat.expanded .icon-close-open { \
+                    background-position: 0 -20px; \
                 } \
             ";
             $('<style type="text/css">').text(css).appendTo(head);
