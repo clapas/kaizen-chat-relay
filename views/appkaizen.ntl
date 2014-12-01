@@ -125,7 +125,7 @@
                       <input type="submit" value="Send"> \
                   </form> \
                   <p class="chat_footer"> \
-                      Powered by AppKaizen \
+                      <a href="http://clapas.github.io/Chat-web-a-movil/" target="_blank">Powered by AppKaizen</a> \
                   </p> \
                 </div> \
               </div> \
@@ -199,6 +199,7 @@
                 } \
                 .appkaizen_chat.online .chat_online, .appkaizen_chat.offline .chat_offline { \
                     position: fixed; \
+                    background-color: white; \
                     right: 5px; \
                     bottom: 0; \
                     width: 260px; \
@@ -280,7 +281,11 @@
                     font-family: 'Vollkorn', serif; \
                     text-align: center; \
                     font-size: 0.7em; \
+                } \
+                p.chat_footer a { \
+                    text-decoration: none; \
                     color: #669; \
+                    font-style: none; \
                 } \
             ";
             $('<style type="text/css">').text(css).appendTo(head);
