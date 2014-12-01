@@ -144,8 +144,8 @@
             root_el.parent().append(container);
     
             var css = " \
-                .appckaizen_chat { \
-                    font-size: 12px; \
+                .appkaizen_chat { \
+                    font-size: 14px; \
                 } \
                 .appkaizen_chat .chat_collapsed { \
                     position: fixed; \
@@ -199,7 +199,6 @@
                 } \
                 .appkaizen_chat.online .chat_online, .appkaizen_chat.offline .chat_offline { \
                     position: fixed; \
-                    background-color: white; \
                     right: 5px; \
                     bottom: 0; \
                     width: 260px; \
@@ -222,6 +221,7 @@
                 .appkaizen_chat .chat_body { \
                     border-left: 1px solid #d5d5d5; \
                     border-right: 1px solid #d5d5d5; \
+                    background-color: white; \
                     height: 313px; \
                     padding: 4px; \
                 } \
