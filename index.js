@@ -17,8 +17,8 @@ app.engine('ntl', function (filePath, options, callback) { // define the templat
         if (err) throw new Error(err);
         // this is an exteremly simple template engine
         var rendered = content.toString()
+            .replace(/#chat_title#/g, options.chat_title)
             .replace(/#user_id#/g, options.user_id)
-            .replace(/#bgcolor#/g, options.bgcolor)
             .replace(/#chat_relay_baseURL#/g, options.baseURL);
         return callback(null, rendered);
     })
@@ -27,10 +27,10 @@ app.set('views', './views'); // specify the views directory
 app.set('view engine', 'ntl'); // register the template engine
 
 app.get('/appkaizen.js', function (req, res) {
-    if (!req.query.bgcolor) req.query.bgcolor = '#ddd';
+    if (!req.query.chat_title) req.query.chat_title = 'AppKaizen Chat';
     res.setHeader('content-type', 'application/javascript');
     res.render('appkaizen', {
-        bgcolor: req.query.bgcolor,
+        chat_title: req.query.chat_title,
         user_id: req.query.user_id,
         baseURL: req.protocol + '://' + req.get('host')
     });
