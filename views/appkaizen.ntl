@@ -320,6 +320,10 @@
             socket.on('available', function(msg) {
                 $(uids).removeClass('offline').addClass('online');
             });
+            socket.on('chat message', function(msg) {
+                $('.chat_history', uids).append($('<li>').addClass('received').text(msg));
+                $('.chat_history_wrapper', uids).scrollTop(0xffff);
+            });
             $(".chat_online .message", uids).keypress(function(e) {
                 if (e.which == 13) {
                     $(this).parent().submit();
